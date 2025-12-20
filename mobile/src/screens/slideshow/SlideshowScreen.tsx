@@ -10,7 +10,7 @@ import {
   ActivityIndicator,
   Modal,
 } from 'react-native';
-import {launchImageLibrary, ImagePickerResponse} from '@react-native-community/image-picker';
+import {launchImageLibrary, ImagePickerResponse} from 'react-native-image-picker';
 import {useSlideshowStore} from '../../store/slideshowStore';
 import {useCoupleStore} from '../../store/coupleStore';
 
