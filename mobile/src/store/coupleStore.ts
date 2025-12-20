@@ -18,8 +18,22 @@ export const useCoupleStore = create<CoupleState>((set) => ({
   fetchStatus: async () => {
     try {
       set({isLoading: true});
-      const status = await coupleApi.getStatus();
+      const apiResponse = await coupleApi.getStatus();
+      console.log("fetchStatus result:", apiResponse);
+      
+      // Transform API response to match CoupleStatus interface
+      // API returns "paired" but we need "isPaired"
+      const status = {
+        isPaired: apiResponse.paired || apiResponse.isPaired || false,
+        coupleId: apiResponse.coupleId || null,
+        partnerId: apiResponse.partnerId || null,
+        partnerDisplayName: apiResponse.partnerDisplayName || null,
+        pairedAt: apiResponse.pairedAt || null,
+      };
+      
+      console.log("Transformed status:", status);
       set({status, isLoading: false});
+      return status;
     } catch (error) {
       set({isLoading: false});
       throw error;

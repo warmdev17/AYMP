@@ -56,6 +56,14 @@ subprojects {
                     sourceCompatibility JavaVersion.VERSION_11
                     targetCompatibility JavaVersion.VERSION_11
                 }
+                
+                // Force all subprojects to use the same SDK versions
+                if (project.android.hasProperty('compileSdkVersion')) {
+                    project.android.compileSdkVersion = rootProject.ext.compileSdkVersion
+                }
+                if (project.android.hasProperty('buildToolsVersion')) {
+                    project.android.buildToolsVersion = rootProject.ext.buildToolsVersion
+                }
             }
         }
 
@@ -71,5 +79,10 @@ subprojects {
         if (project.plugins.hasPlugin('kotlin-android') || project.plugins.hasPlugin('org.jetbrains.kotlin.android')) {
             project.ext.kotlinVersion = rootProject.ext.kotlinVersion
         }
+        
+        // 4. Force compileSdkVersion for all subprojects
+        project.ext.compileSdkVersion = rootProject.ext.compileSdkVersion
+        project.ext.targetSdkVersion = rootProject.ext.targetSdkVersion
+        project.ext.buildToolsVersion = rootProject.ext.buildToolsVersion
     }
 }

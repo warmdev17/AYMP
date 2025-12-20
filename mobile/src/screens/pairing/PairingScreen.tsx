@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,15 +7,15 @@ import {
   StyleSheet,
   Alert,
   ActivityIndicator,
-} from 'react-native';
-import {useCoupleStore} from '../../store/coupleStore';
-import {pairingApi} from '../../services/api';
-import {useNavigation} from '@react-navigation/native';
+} from "react-native";
+import { useCoupleStore } from "../../store/coupleStore";
+import { pairingApi } from "../../services/api";
+import { useNavigation } from "@react-navigation/native";
 
 const PairingScreen = () => {
   const navigation = useNavigation();
-  const {status, fetchStatus} = useCoupleStore();
-  const [code, setCode] = useState('');
+  const { status, fetchStatus } = useCoupleStore();
+  const [code, setCode] = useState("");
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
@@ -24,14 +24,24 @@ const PairingScreen = () => {
     checkPairingStatus();
   }, []);
 
+  // Navigate to Main when paired
+  useEffect(() => {
+    if (status?.isPaired) {
+      console.log("Status isPaired changed to true, navigating to Main");
+      setTimeout(() => {
+        (navigation as any).reset({
+          index: 0,
+          routes: [{ name: 'Main' }],
+        });
+      }, 100);
+    }
+  }, [status?.isPaired, navigation]);
+
   const checkPairingStatus = async () => {
     try {
       await fetchStatus();
-      if (status?.isPaired) {
-        navigation.navigate('Main' as never);
-      }
     } catch (error) {
-      console.error('Error checking pairing status:', error);
+      console.error("Error checking pairing status:", error);
     }
   };
 
@@ -40,9 +50,15 @@ const PairingScreen = () => {
     try {
       const response = await pairingApi.generateCode();
       setGeneratedCode(response.code);
-      Alert.alert('Pairing Code', `Your code: ${response.code}\n\nShare this with your partner!`);
+      Alert.alert(
+        "Pairing Code",
+        `Your code: ${response.code}\n\nShare this with your partner!`,
+      );
     } catch (error: any) {
-      Alert.alert('Error', error.response?.data?.error || 'Failed to generate code');
+      Alert.alert(
+        "Error",
+        error.response?.data?.error || "Failed to generate code",
+      );
     } finally {
       setGenerating(false);
     }
@@ -50,7 +66,7 @@ const PairingScreen = () => {
 
   const handleConfirmPairing = async () => {
     if (!code || code.length !== 6) {
-      Alert.alert('Error', 'Please enter a valid 6-digit code');
+      Alert.alert("Error", "Please enter a valid 6-digit code");
       return;
     }
 
@@ -58,10 +74,21 @@ const PairingScreen = () => {
     try {
       await pairingApi.confirmPairing(code);
       await fetchStatus();
-      Alert.alert('Success', 'You are now paired!');
-      navigation.navigate('Main' as never);
+      
+      // Force navigation to Main screen after pairing
+      setTimeout(() => {
+        (navigation as any).reset({
+          index: 0,
+          routes: [{ name: 'Main' }],
+        });
+      }, 100);
+      
+      Alert.alert("Success", "You are now paired!");
     } catch (error: any) {
-      Alert.alert('Error', error.response?.data?.error || 'Invalid pairing code');
+      Alert.alert(
+        "Error",
+        error.response?.data?.error || "Invalid pairing code",
+      );
     } finally {
       setLoading(false);
     }
@@ -83,7 +110,8 @@ const PairingScreen = () => {
         <TouchableOpacity
           style={[styles.button, generating && styles.buttonDisabled]}
           onPress={handleGenerateCode}
-          disabled={generating}>
+          disabled={generating}
+        >
           {generating ? (
             <ActivityIndicator color="#fff" />
           ) : (
@@ -112,7 +140,8 @@ const PairingScreen = () => {
         <TouchableOpacity
           style={[styles.button, loading && styles.buttonDisabled]}
           onPress={handleConfirmPairing}
-          disabled={loading}>
+          disabled={loading}
+        >
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
@@ -128,74 +157,73 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginTop: 40,
     marginBottom: 10,
-    color: '#e91e63',
+    color: "#e91e63",
   },
   subtitle: {
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 40,
-    color: '#666',
+    color: "#666",
   },
   section: {
     marginBottom: 30,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 15,
-    color: '#333',
+    color: "#333",
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderRadius: 8,
     padding: 15,
     fontSize: 24,
-    textAlign: 'center',
+    textAlign: "center",
     letterSpacing: 8,
     marginBottom: 15,
   },
   button: {
-    backgroundColor: '#e91e63',
+    backgroundColor: "#e91e63",
     padding: 15,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   buttonDisabled: {
     opacity: 0.6,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   codeContainer: {
     marginTop: 20,
     padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   codeText: {
     fontSize: 48,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     letterSpacing: 8,
-    color: '#e91e63',
+    color: "#e91e63",
   },
   divider: {
     height: 1,
-    backgroundColor: '#ddd',
+    backgroundColor: "#ddd",
     marginVertical: 30,
   },
 });
 
 export default PairingScreen;
-
