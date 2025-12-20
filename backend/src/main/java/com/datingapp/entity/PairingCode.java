@@ -16,28 +16,27 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PairingCode {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
-    @Column(nullable = false, length = 6)
-    private String code;
-    
-    @Column(nullable = false)
-    private Long ownerUserId;
-    
-    @Column(nullable = false)
-    private LocalDateTime expiresAt;
-    
-    @Column(nullable = false)
-    private Boolean used = false;
-    
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-    
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
-}
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
+  @Column(nullable = false, length = 6)
+  private String code;
+
+  @Column(name = "owner_user_id", nullable = false)
+  private Long ownerUserId;
+
+  @Column(nullable = false)
+  private LocalDateTime expiresAt;
+
+  @Column(nullable = false)
+  private Boolean used = false;
+
+  @Column(nullable = false, updatable = false)
+  private LocalDateTime createdAt;
+
+  @PrePersist
+  protected void onCreate() {
+    createdAt = LocalDateTime.now();
+  }
+}

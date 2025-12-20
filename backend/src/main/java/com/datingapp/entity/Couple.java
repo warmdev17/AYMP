@@ -16,22 +16,21 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Couple {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
-    @Column(nullable = false)
-    private Long user1Id;
-    
-    @Column(nullable = false)
-    private Long user2Id;
-    
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime pairedAt;
-    
-    @PrePersist
-    protected void onCreate() {
-        pairedAt = LocalDateTime.now();
-    }
-}
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
+  @Column(name = "user1_id", nullable = false)
+  private Long user1Id;
+
+  @Column(name = "user2_id", nullable = false)
+  private Long user2Id;
+
+  @Column(name = "paired_at", nullable = false, updatable = false)
+  private LocalDateTime pairedAt;
+
+  @PrePersist
+  protected void onCreate() {
+    pairedAt = LocalDateTime.now();
+  }
+}
